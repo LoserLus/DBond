@@ -1,0 +1,15 @@
+.vscode/**
+__pycache__/**
+
+tensorboard/**
+checkpoint/**
+best_model/**
+result/**
+dataset/**
+
+# 保留所有目录里的 .gitkeep 文件
+!**/.gitkeep
+
+*.pyc
+*.pt
+*.svg

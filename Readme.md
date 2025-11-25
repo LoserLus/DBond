@@ -1,0 +1,1 @@
+docker build -t dbond_env:v0 .

@@ -1,0 +1,42 @@
+tag: 'default'
+train_args:
+ batch_size: 4096
+ epoch: 50
+ save_per_epoch: 10
+ seed: 2024
+ loss_type: 'ce'
+ loss_args:
+  label_smoothing: 0.1
+ optimizer: 'adam'
+ optimizer_args:
+  weight_decay: 1.0e-4
+  lr: 1.0e-4
+ early_stopping:
+  patience: 5
+  delta: 1.0e-4
+ dataloader_workers: 4
+csv: 
+ train_dataset_path: '/workspace/dataset/dbond_s.train.shuffle.csv'
+ test_dataset_path: '/workspace/dataset/dbond_s.test.csv'
+ label_col_name: 'bond_label'
+ seq_col_name: 'seq'
+ bond_index_col_name: 'bond_pos'
+ state_var_col_name: 
+  - 'charge'
+  - 'pep_mass'
+  - 'intensity'
+ bond_var_col_name: 
+  - 'bond_pos'
+ env_var_col_name: 
+  - 'nce'
+  - 'scan_num'
+seq:
+  alphabet: '#ABCDEFGHIKLMNOPQRSTVWXYZ'
+  pad_char: '#'
+  max_len: 36
+model:
+  hidden_dim: 256
+  num_heads: 4
+  dropout: 0.1
+  forward_expansion: 2 
+  attention_layer_num: 1

@@ -1,4 +1,4 @@
-FROM docker.1ms.run/pytorch/pytorch:2.1.2-cuda11.8-cudnn8-runtime
+FROM pytorch/pytorch:2.1.2-cuda11.8-cudnn8-runtime
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV GEOGRAPHIC_AREA=Asia

@@ -1,16 +1,18 @@
 
-import pandas as pd
 from pyteomics import mgf
 from utils import Peptide,get_threshold, float_binary_search_with_threshold
 from typing import List,Tuple,Dict
-
 import logging
+import datetime
+
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s[%(levelname)s]-%(message)s",
     datefmt="%Y-%m-%d %H:%M:%S"
 )
+# set timezone to Beijing time
+logging.Formatter.converter = lambda *args: (datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(hours=8)).timetuple()
 
 
 ppm = 20
@@ -98,12 +100,27 @@ def process_one_mgf(in_mgf_path:str,out_mgf_path:str) -> None:
             sp["params"]["fb"] = fb
             sp["params"]["mb"] = mb
             sps.append(sp)
-    logging.info("Write mgf to {out_mgf_path}")
+    logging.info(f"Write mgf to {out_mgf_path}")
     with open(out_mgf_path, "w") as f:
         mgf.write(sps,f)
 
   
 if __name__ == "__main__":
-    in_mgf_path = "./mgf_dataset/example.mgf"
-    out_mgf_path = "./mgf_dataset/example_out.mgf"
+    import argparse
+    parse = argparse.ArgumentParser(description="Args for PBCLA")
+    parse.add_argument(
+        "--in_mgf_path",
+        type=str,
+        help="Path to the input MGF file",
+        default="./mgf_dataset/example.mgf",
+    )
+    parse.add_argument(
+        "--out_mgf_path",
+        type=str,
+        help="Path to save the output MGF file",
+        default="./mgf_dataset/example_out.mgf",
+    )
+    args = parse.parse_args()
+    in_mgf_path = args.in_mgf_path
+    out_mgf_path = args.out_mgf_path
     process_one_mgf(in_mgf_path, out_mgf_path)

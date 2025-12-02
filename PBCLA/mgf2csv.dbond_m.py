@@ -88,7 +88,22 @@ def mgf2csv(mgf_path:str,csv_path:str) -> None:
             mgf_df.to_csv(csv_path,index=False)
 
 if __name__ == "__main__":
-    mgf_path = "./mgf_dataset/example_out.mgf"
-    csv_path = "./mgf_dataset/example.multi.csv"
+    import argparse
+    parser = argparse.ArgumentParser(description="Convert MGF to CSV for Multi-Label Classification")
+    parser.add_argument(
+        "--mgf_path",
+        type=str,
+        default="./mgf_dataset/example_out.mgf",
+        help="Path to the input MGF file."
+    )
+    parser.add_argument(
+        "--csv_path",
+        type=str,
+        default="./mgf_dataset/example.multi.csv",
+        help="Path to save the output CSV file."
+    )
+    args = parser.parse_args()
+    mgf_path = args.mgf_path
+    csv_path = args.csv_path
     mgf2csv(mgf_path,csv_path)
     logging.info(f"MGF file {mgf_path} has been converted to CSV file {csv_path}.")

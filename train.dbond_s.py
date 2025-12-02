@@ -12,7 +12,13 @@ import datetime
 import argparse
 import random
 import os
-
+import logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s[%(levelname)s]:%(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logging.Formatter.converter = lambda *args: (datetime.datetime.now(datetime.timezone.utc)+datetime.timedelta(hours=8)).timetuple()
 
 
 MODEL = 'dbond_s'
@@ -34,9 +40,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--config',type=str,action='store',default='/workspace/dbond_s_config/default.yaml',help='path to config')
 
 args = parser.parse_args()
-print('='*10+'Args'+'='*10)
+logging.info('='*10+'Args'+'='*10)
 for k,v in vars(args).items():
-    print(f'{k:15}\t{v}')
+    logging.info(f'{k:15}\t{v}')
 
 with open(str(args.config), 'r') as stream:
     config = yaml.safe_load(stream)
@@ -50,7 +56,7 @@ epoch_cnt_to_save = int(config['train_args']['save_per_epoch'])
 train_writer = SummaryWriter(tensorboard_log_pattern.format(model=MODEL,time=run_time,status = 'train',tag = config['tag']))
 test_writer = SummaryWriter(tensorboard_log_pattern.format(model=MODEL,time=run_time,status = 'test',tag = config['tag']))
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-print('='*10+str(device)+'='*10)
+logging.info('='*10+str(device)+'='*10)
 
 torch.manual_seed(config['train_args']['seed'])
 torch.cuda.manual_seed_all(config['train_args']['seed'])
@@ -79,7 +85,7 @@ test_dataloader = torch.utils.data.DataLoader(
 
 model = Net(config)
 
-print(str(model))
+logging.info(str(model))
 model.to(device)
 optimizer:torch.optim.Optimizer
 
@@ -144,7 +150,7 @@ def process(epoch:int, status:str,writer:SummaryWriter,dataloader:torch.utils.da
 
             loss_sum.append(label_real_batch.shape[0]*loss.item())
 
-            # print(label_predict_batch.shape)
+            # logging.info(label_predict_batch.shape)
             label_prob_batch = torch.nn.functional.softmax(label_predict_batch,dim=1)
 
             label_predict_batch = label_predict_batch.argmax(dim=1)
@@ -236,25 +242,25 @@ for epoch in range(config['train_args']['epoch']):
     if epoch % epoch_cnt_to_save == 0:
         save_path = checkpoint_path_pattern.format(model =MODEL, time = get_beijing_time().strftime("%Y_%m_%d_%H_%M"), tag = config['tag'],epoch=epoch) 
         save_checkpoint(save_path,test_metrics_dict,'test')
-        print(f'save checkpoint: {save_path}')
+        logging.info(f'save checkpoint: {save_path}')
         
     if early_stop(test_metrics_dict['AUC']):
-        print(f"{'#'*10} early stop {'#'*10}")
-        print(f"{'#'*10} epoch: [{epoch}/{config['train_args']['epoch']}] {'#'*10}")
-        print(f"{'#'*10} best AUC {best_test_auc:.4} {'#'*10}")
-        print(f"{'#'*10} test AUC {test_metrics_dict['AUC']:.4} {'#'*10}")
+        logging.info(f"{'#'*10} early stop {'#'*10}")
+        logging.info(f"{'#'*10} epoch: [{epoch}/{config['train_args']['epoch']}] {'#'*10}")
+        logging.info(f"{'#'*10} best AUC {best_test_auc:.4} {'#'*10}")
+        logging.info(f"{'#'*10} test AUC {test_metrics_dict['AUC']:.4} {'#'*10}")
         break
     if  test_metrics_dict['AUC'] > best_test_auc:
         best_test_auc = test_metrics_dict['AUC']
         save_path = model_weight_path_pattern.format(model =MODEL, time = get_beijing_time().strftime("%Y_%m_%d_%H_%M"), tag = config['tag'],epoch=epoch)
         save_checkpoint(save_path,test_metrics_dict,'test')
-        print(f'save model weight: {save_path}')
+        logging.info(f'save model weight: {save_path}')
         if best_test_model_path != '':
             try:
                 os.remove(best_test_model_path)
-                print(f'remove success: {best_test_model_path}')
+                logging.info(f'remove success: {best_test_model_path}')
             except Exception as e:
-                print(f'remove failed: {best_test_model_path}\nerror: {e}')
+                logging.info(f'remove failed: {best_test_model_path}\nerror: {e}')
         best_test_model_path = save_path
 train_writer.close()
 test_writer.close()

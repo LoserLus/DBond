@@ -47,3 +47,4 @@ PBCLA/__pycache__/**
 *.pyc
 *.pt
 *.svg
+*.log

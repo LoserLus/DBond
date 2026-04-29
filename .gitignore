@@ -1,0 +1,52 @@
+.vscode/**
+__pycache__/
+
+tensorboard/*
+checkpoint/*
+best_model/*
+result/*
+dataset/*
+PBCLA/__pycache__/**
+
+# 先取消忽略 result 目录本身
+!result/
+
+# 然后取消忽略 result 下的特定子目录
+!result/pred/
+!result/metric/
+!result/pred/dbond_m/
+!result/pred/dbond_s/
+!result/pred/dbond_m/multi/
+!result/pred/dbond_s/multi/
+!result/metric/dbond_m/
+!result/metric/dbond_s/
+!result/metric/dbond_m/multi/
+!result/metric/dbond_s/multi/
+
+!best_model/
+!best_model/dbond_m/
+!best_model/dbond_s/
+# 保留所有目录里的 .gitkeep 文件
+!**/.gitkeep
+
+# 保留 dataset 中的特定文件
+!dataset/dataset.fbr.csv
+!dataset/dbond_m.test.csv
+!dataset/dbond_m.train.shuffle.csv
+!dataset/dbond_m.validation.csv
+!dataset/dbond_s.test.csv
+!dataset/dbond_s.train.shuffle.csv
+!dataset/dbond_s.validation.csv
+
+# 最后指定要保留的具体文件
+!result/pred/dbond_m/multi/default.pred.csv
+!result/pred/dbond_s/multi/default.pred.csv
+!result/metric/dbond_s/multi/default_metric.csv
+!result/metric/dbond_s/single/default_metric.csv
+!result/metric/dbond_m/multi/default_metric.csv
+
+# 其他忽略
+*.pyc
+*.pt
+*.svg
+*.log
